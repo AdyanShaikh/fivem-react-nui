@@ -1,0 +1,9 @@
+web/node_modules/
+web/dist/
+web/.vite/
+*.log
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
