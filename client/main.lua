@@ -3,6 +3,7 @@ local uiOpen = false
 local function setUiVisible(visible)
     uiOpen = visible
     SetNuiFocus(visible, visible)
+
     SendNUIMessage({
         action = visible and 'ui:open' or 'ui:close',
     })
@@ -11,6 +12,8 @@ end
 RegisterCommand('nui', function()
     setUiVisible(not uiOpen)
 end, false)
+
+RegisterKeyMapping('nui', 'Open FiveM React NUI', 'keyboard', 'F2')
 
 RegisterNUICallback('ui:close', function(_, cb)
     setUiVisible(false)
@@ -25,12 +28,8 @@ RegisterNUICallback('nui:ping', function(data, cb)
     })
 end)
 
-CreateThread(function()
-    while true do
-        Wait(0)
-
-        if uiOpen and IsControlJustPressed(0, 322) then
-            setUiVisible(false)
-        end
+AddEventHandler('onResourceStop', function(resourceName)
+    if resourceName == GetCurrentResourceName() then
+        SetNuiFocus(false, false)
     end
 end)
