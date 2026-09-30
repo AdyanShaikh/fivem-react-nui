@@ -1,11 +1,13 @@
 {
   "name": "fivem-react-nui-web",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start:game": "vite build --watch",
     "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --pretty false",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
