@@ -1,9 +1,14 @@
 import { useCallback } from 'react'
-import { fetchNui } from './fetchNui'
+import { fetchNui, type FetchNuiOptions } from './fetchNui'
+import type { NuiCallbacks, NuiCallbackName } from './contracts'
 
-export function useNuiCallback<TResponse = unknown, TPayload = unknown>(eventName: string) {
+export function useNuiCallback<K extends NuiCallbackName>(
+  eventName: K,
+  options?: FetchNuiOptions,
+) {
   return useCallback(
-    (data?: TPayload) => fetchNui<TResponse, TPayload>(eventName, data),
-    [eventName],
+    (data: NuiCallbacks[K]['request'], mockResponse?: NuiCallbacks[K]['response']) =>
+      fetchNui(eventName, data, mockResponse, options),
+    [eventName, options],
   )
 }
