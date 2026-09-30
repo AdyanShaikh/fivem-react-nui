@@ -1,4 +1,5 @@
-export { fetchNui } from './fetchNui'
+export { closeNui, fetchNui, sendNuiMessage } from './fetchNui'
 export { isEnvBrowser } from './isEnvBrowser'
+export { useNuiCallback } from './useNuiCallback'
 export { useNuiEvent } from './useNuiEvent'
-export type { NuiCallbackResponse, NuiEventMap } from './types'
+export type { NuiCallbackResponse, NuiEventHandler } from './types'
