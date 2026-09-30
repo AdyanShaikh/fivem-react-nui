@@ -1,3 +1,5 @@
+export type { NuiCallbacks, NuiCallbackName, NuiEvents, NuiEventName } from './contracts'
+
 export type NuiCallbackResponse<T> = {
   ok: boolean
   data?: T
