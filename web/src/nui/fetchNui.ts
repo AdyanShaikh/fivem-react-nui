@@ -1,30 +1,35 @@
 import { isEnvBrowser } from './isEnvBrowser'
-import type { NuiCallbackResponse } from './types'
+
+export type NuiCallbackResponse<T> = {
+  ok: boolean
+  data?: T
+  error?: string
+}
 
 export async function fetchNui<TResponse = unknown, TPayload = unknown>(
   eventName: string,
   data?: TPayload,
+  mockResponse?: TResponse,
 ): Promise<TResponse> {
   if (isEnvBrowser()) {
-    return {
-      ok: true,
-      data: { event: eventName, ...((data as object) ?? {}) },
-    } as TResponse
+    if (mockResponse !== undefined) return mockResponse
+    return { ok: true } as TResponse
   }
 
   const response = await fetch(`https://${GetParentResourceName()}/${eventName}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
+    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
     body: JSON.stringify(data ?? {}),
   })
-
-  if (!response.ok) {
-    throw new Error(`NUI callback failed: ${response.status}`)
-  }
-
+  if (!response.ok) throw new Error(`NUI callback failed: ${response.status}`)
   return (await response.json()) as TResponse
 }
 
-export type { NuiCallbackResponse }
+export function sendNuiMessage<TPayload = Record<string, unknown>>(
+  action: string,
+  payload?: TPayload,
+): void {
+  window.postMessage({ action, ...(payload as object) }, '*')
+}
+
+export const closeNui = () => fetchNui('ui:close')
