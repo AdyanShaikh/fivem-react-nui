@@ -4,4 +4,4 @@ export type NuiCallbackResponse<T> = {
   error?: string
 }
 
-export type NuiEventMap = Record<string, unknown>
+export type NuiEventHandler<T = unknown> = (payload: T) => void
