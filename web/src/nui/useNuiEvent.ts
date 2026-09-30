@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
-import type { NuiEventHandler } from './types'
+import type { NuiEvents, NuiEventName } from './contracts'
 
-export function useNuiEvent<TPayload = unknown>(
-  eventName: string,
-  handler: NuiEventHandler<TPayload>,
+export function useNuiEvent<K extends NuiEventName>(
+  eventName: K,
+  handler: (payload: NuiEvents[K]) => void,
 ): void {
   const handlerRef = useRef(handler)
 
@@ -13,9 +13,11 @@ export function useNuiEvent<TPayload = unknown>(
 
   useEffect(() => {
     const listener = (event: MessageEvent) => {
-      const data = event.data as { action?: string } & TPayload
-      if (data?.action === eventName) handlerRef.current(data)
+      const data = event.data as { action?: K } & NuiEvents[K]
+      if (data?.action !== eventName) return
+      handlerRef.current(data as NuiEvents[K])
     }
+
     window.addEventListener('message', listener)
     return () => window.removeEventListener('message', listener)
   }, [eventName])
