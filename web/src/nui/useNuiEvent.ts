@@ -1,19 +1,22 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import type { NuiEventHandler } from './types'
 
 export function useNuiEvent<TPayload = unknown>(
   eventName: string,
-  handler: (payload: TPayload) => void,
+  handler: NuiEventHandler<TPayload>,
 ): void {
+  const handlerRef = useRef(handler)
+
   useEffect(() => {
-    const listener = (event: MessageEvent<TPayload>) => {
-      const data = event.data as TPayload & { action?: string }
+    handlerRef.current = handler
+  }, [handler])
 
-      if (data && typeof data === 'object' && data.action === eventName) {
-        handler(data)
-      }
+  useEffect(() => {
+    const listener = (event: MessageEvent) => {
+      const data = event.data as { action?: string } & TPayload
+      if (data?.action === eventName) handlerRef.current(data)
     }
-
     window.addEventListener('message', listener)
     return () => window.removeEventListener('message', listener)
-  }, [eventName, handler])
+  }, [eventName])
 }
